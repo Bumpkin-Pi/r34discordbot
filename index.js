@@ -46,7 +46,7 @@ client.on('interactionCreate', async interaction => {
             console.log('Saved!');
         });
         if (list[0]){
-            await interaction.reply(interaction.options.getString("query") + "\n" + list[getRandomInt(list.length)].thumbnail)
+            await interaction.reply(list[getRandomInt(list.length)].thumbnail)
         }else{
             await interaction.reply(":x: No results.")
         }
