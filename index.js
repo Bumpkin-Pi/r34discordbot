@@ -5,6 +5,7 @@ const { REST } = require("@discordjs/rest")
 const { Routes } = require('discord-api-types/v10');
 const { SlashCommandBuilder } = require("@discordjs/builders")
 const r34 = require("api-rule34-xxx")
+const fs = require("fs")
 dotenv.config()
 const TOKEN = process.env.TOKEN
 
@@ -39,11 +40,15 @@ client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
     if (interaction.commandName === "r34"){
         let list = await(r34.searchByText(interaction.options.getString("query")))
-        console.log(list)
+        console.log("user: "+interaction.user.tag+", query: "+interaction.options.getString("query"))
+        await fs.appendFileSync('log.txt', ("user: "+interaction.user.tag+", query: "+interaction.options.getString("query")), function (err) {
+            if (err) throw err;
+            console.log('Saved!');
+        });
         if (list[0]){
             await interaction.reply(list[getRandomInt(list.length)].thumbnail)
         }else{
-            await interaction.reply(":xtick: No results.")
+            await interaction.reply(":x: No results.")
         }
 
 
