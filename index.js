@@ -41,15 +41,16 @@ client.on('interactionCreate', async interaction => {
     if (interaction.commandName === "r34"){
         let list = await(r34.searchByText(interaction.options.getString("query")))
         console.log("user: "+interaction.user.tag+", query: "+interaction.options.getString("query"))
-        await fs.appendFileSync('log.txt', ("user: "+interaction.user.tag+", query: "+interaction.options.getString("query")), function (err) {
+        await fs.appendFileSync('log.txt', ("user: "+interaction.user.tag+", query: "+interaction.options.getString("query") + "\n"), function (err) {
             if (err) throw err;
             console.log('Saved!');
         });
         if (list[0]){
-            await interaction.reply(list[getRandomInt(list.length)].thumbnail)
+            await interaction.reply(interaction.options.getString("query") + "\n" + list[getRandomInt(list.length)].thumbnail)
         }else{
             await interaction.reply(":x: No results.")
         }
+
 
 
         console.log("command replied to")
