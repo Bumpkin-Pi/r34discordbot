@@ -8,6 +8,9 @@ const r34 = require("api-rule34-xxx")
 const fs = require("fs")
 dotenv.config()
 const TOKEN = process.env.TOKEN
+let rawdata = fs.readFileSync('list.json');
+let list = JSON.parse(rawdata);
+
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -39,14 +42,17 @@ client.slashcommands = new Discord.Collection()
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
     if (interaction.commandName === "r34"){
-        let list = await(r34.searchByText(interaction.options.getString("query")))
+        let listn = await(r34.searchByText(interaction.options.getString("query")))
         console.log("user: "+interaction.user.tag+", query: "+interaction.options.getString("query"))
         await fs.appendFileSync('log.txt', ("user: "+interaction.user.tag+", query: "+interaction.options.getString("query") + "\n"), function (err) {
             if (err) throw err;
             console.log('Saved!');
         });
         if (list[0]){
-            await interaction.reply(list[getRandomInt(list.length)].thumbnail)
+            await interaction.reply(listn[getRandomInt(listn.length)].thumbnail)
+            list.list.concat(listn)
+            let data = JSON.stringify(list);
+            await fs.writeFileSync('list.json', data);
         }else{
             await interaction.reply(":x: No results.")
         }
