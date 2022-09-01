@@ -4,8 +4,13 @@ const { Client, GatewayIntentBits} = require('discord.js');
 const { REST } = require("@discordjs/rest")
 const { Routes } = require('discord-api-types/v10');
 const { SlashCommandBuilder } = require("@discordjs/builders")
+const r34 = require("api-rule34-xxx")
 dotenv.config()
 const TOKEN = process.env.TOKEN
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
 
 async function register (GUILD_ID){
     const rest = new REST().setToken(TOKEN);
@@ -21,7 +26,7 @@ async function register (GUILD_ID){
 };
 
 const commands = [
-    new SlashCommandBuilder().setName("command").setDescription("command template"),
+    new SlashCommandBuilder().setName("r34").setDescription("rule 34 for the average degenerate").addStringOption((option) => option.setName("query").setDescription("query tag").setRequired(true)),
 ];
 
 //________________________________________________________________\\
@@ -32,8 +37,16 @@ client.slashcommands = new Discord.Collection()
 
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
-    if (interaction.commandName === "command"){
-        await interaction.reply("responce")
+    if (interaction.commandName === "r34"){
+        let list = await(r34.searchByText(interaction.options.getString("query")))
+        console.log(list)
+        if (list[0]){
+            await interaction.reply(list[getRandomInt(list.length)].thumbnail)
+        }else{
+            await interaction.reply(":xtick: No results.")
+        }
+
+
         console.log("command replied to")
     }
 });
